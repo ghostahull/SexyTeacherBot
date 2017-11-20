@@ -1,17 +1,7 @@
-import random, json, re
+import random
+import re
 
-CONF_FILENAME = "conf.json"
 VIDEO_FORMAT = re.compile("^http(?:s?)://(?:www\.)?youtu(?:be\.com/watch\?v=|\.be/)([\w\-_]*)(&(amp;)?‌​[\w\?‌​=]*)?$")
-
-
-def check_nick(msg, nick=None):
-    return "%s: %s" % (nick, msg) if nick else msg
-
-
-def write_data(data):
-    w = open(CONF_FILENAME, "w")
-    json.dump(data, w)
-    w.close()
 
 
 class Learninghub(object):
@@ -29,10 +19,15 @@ class Learninghub(object):
         )
         self.bot.notice(nick, greet)
 
+    def users(self, nick=None):
+        num = len(self.data["users"])
+        msg = "There are %d registered users." % num
+        return self.bot.check_nick(msg, nick)
+
     def random_course(self, nick=None):
         i = random.choice(self.data[self.name]["courses"])
         msg = "%s. %s." % (i["id"], i["title"])
-        return check_nick(msg, nick)
+        return self.bot.check_nick(msg, nick)
 
     def desc(self, course):
         try:
@@ -65,7 +60,7 @@ class Opsec(object):
 
     def video(self, nick=None):
         videos = self.data[self.name]["videos"]
-        return check_nick(random.choice(videos), nick)
+        return self.bot.check_nick(random.choice(videos), nick)
 
     def add_video(self, video=None):
         if video in self.data[self.name]["videos"]:
@@ -75,5 +70,5 @@ class Opsec(object):
             return "Wrong video format. Please add youtube links only."
 
         self.data[self.name]["videos"].append(video)
-        write_data(self.data)
+        self.bot.write_data(self.data)
         return "Video added successfully."
