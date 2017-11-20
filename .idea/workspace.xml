@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d53e1365-c642-4cbd-be3e-4a17f0c3516f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/alpha.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/Exceptions.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Bot.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/CustomChannels.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/errors.log" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/SexyTeacherBot.iml" afterPath="$PROJECT_DIR$/.idea/SexyTeacherBot.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
-    </list>
+    <list default="true" id="d53e1365-c642-4cbd-be3e-4a17f0c3516f" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
