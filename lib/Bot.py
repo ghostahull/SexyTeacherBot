@@ -37,9 +37,10 @@ class Bot(object):
 
     def _listen(self):
         valid = re.compile(
-            r'^:(?P<nick>[\w-]+)!\S* (?P<mode>\w+):?(?P<chan>#?\w+)(\s:\?(?P<cmd>\w+)(\s(?P<arg>\w+))?)?')
+            r"^:(?P<nick>\w+)!\S* (?P<mode>[A-Z]+) :?(?P<chan>#?\w+)(\s:\?(?P<cmd>\w+)(\s(?P<arg>\w+))?)?")
 
         recvd = self.s.recv(4096).decode()
+
         data = valid.match(recvd)
 
         if "PING" == recvd[:4]:
@@ -170,7 +171,7 @@ class Bot(object):
                     return "Quick response command. Use: ?%s <nick>" % arg.lower()
                 commands += [x for x in self.data[chan]["commands"]]
 
-        if "actions" in self.data[chan]:
+        if chan in self.data and "actions" in self.data[chan]:
             if arg in self.data[chan]["actions"]:
                 return "There is no help for that command. Try: ?%s" % arg.lower()
 

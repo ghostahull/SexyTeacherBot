@@ -1,6 +1,5 @@
 from threading import Thread
 import json
-import os
 
 from lib.Bot import Bot
 from lib.Exceptions import InvalidConfiguration
@@ -20,25 +19,25 @@ ART = """
 
 
 def load_config():
-    basedir = os.path.dirname(os.path.abspath(__file__))
-    conf_file = os.path.join(basedir, "conf.json")
+    CONF_FILE = "conf.json"
+
     try:
-        with open(conf_file, 'r') as f:
-            data = json.load(f.read())
-        conf = data["conf"]
+        f = open(CONF_FILE, 'r')
+        data = json.load(f)
     except Exception:
         raise InvalidConfiguration
-    return data, conf
+
+    return data
 
 
 def main():
-    print(ART)
-    data, conf = load_config()
+    # print(ART)
+    data = load_config()
     bot = Bot(data)
     Thread(target=bot.chat).start()
 
     print("[+] Bot is up and running.")
-    print(conf["chans"][0])
+    print(bot.conf["chans"][0])
 
     bot.run()
 
