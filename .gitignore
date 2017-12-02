@@ -1,3 +1,4 @@
 .idea
 __pyfiles__
 conf.json
+db.sqlite3
