@@ -62,7 +62,7 @@ class Bot(object):
             chan = chan.lower()
 
         # Send welcome message to new users
-        if mode == "JOIN" and self.sha2(nick) not in self.data["users"]:
+        if mode == "JOIN":
             cmd, arg = "welcome", nick
 
         if isinstance(cmd, str):
