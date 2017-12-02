@@ -182,13 +182,6 @@ class Bot(object):
         msg = "Available commands: \u0002%s\u000F." % cmds
         return self.check_nick(msg, arg)
 
-    def add_user(self, user):
-        sha2 = self.sha2(user)
-        if sha2 not in self.data["users"]:
-            self.data["users"].append(sha2)
-            self.write_data(self.data)
-            self.notice(user, "You have been added to the database.")
-
     def listen(self):
         info = self._listen()
 

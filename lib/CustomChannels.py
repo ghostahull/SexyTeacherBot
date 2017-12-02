@@ -1,14 +1,17 @@
 import random
 import re
+import sqlite3
 
 VIDEO_FORMAT = re.compile("^http(?:s?)://(?:www\.)?youtu(?:be\.com/watch\?v=|\.be/)([\w\-_]*)(&(amp;)?‌​[\w\?‌​=]*)?$")
 
 
 class Learninghub(object):
     def __init__(self, data, bot):
+        self.name = "#learninghub"
         self.data = data
         self.bot = bot
-        self.name = "#learninghub"
+        self.db = sqlite3.connect("db.sqlite3")
+        self.c = self.db.cursor()
 
     def welcome(self, nick):
         greet = (
@@ -17,33 +20,37 @@ class Learninghub(object):
             "?desc <course_number> to know the description of a course. You have to use the course number in the "
             "ghostbin. Type ?help for more." % nick
         )
+
+        sha2 = self.bot.sha2(nick)
+        if not self.c.execute("SELECT * FROM users WHERE hash=?", (sha2,)):
+            self.c.execute("INSERT into users values (?)", (sha2,))
+
         self.bot.notice(nick, greet)
 
     def users(self, nick=None):
-        num = len(self.data["users"])
+        num = len(self.c.fetchall())
         msg = "There are %d registered users." % num
         return self.bot.check_nick(msg, nick)
 
     def random_course(self, nick=None):
-        i = random.choice(self.data[self.name]["courses"])
-        msg = "%s. %s." % (i["id"], i["title"])
+        self.c.execute("SELECT * FROM main_course")
+        course = random.choice(self.c.fetchall())
+        msg = "%s. %s." % (course[4], course[1])
         return self.bot.check_nick(msg, nick)
 
     def desc(self, course):
         try:
-            info = self.data[self.name]["courses"][int(course)]
-            d = info["desc"]
-            return d
+            self.c.execute("SELECT * FROM main_course WHERE key=?", (course,))
+            return self.c.fetchone()[2]
         except:
-            return "?desc <0-108>"
+            return "?desc <1-133>"
 
     def link(self, course):
         try:
-            info = self.data[self.name]["courses"][int(course)]
-            url = info["link"]
-            return url
+            self.c.execute("SELECT * FROM main_course WHERE key=?", (course,))
+            return self.c.fetchone()[3]
         except:
-            return "?link <0-108>"
+            return "?link <1-133>"
 
     def whatof(self, arg=None):
         if arg in self.data[self.name]["whatof"]:
