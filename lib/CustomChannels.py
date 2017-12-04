@@ -27,8 +27,8 @@ class Learninghub(object):
             self.bot.notice(nick, greet)
 
     def users(self, nick=None):
-        self.c.execute("SELECT * FROM users")
-        count = len(self.c.fetchall())
+        self.c.execute("SELECT count(*) FROM users")
+        count = self.c.fetchone()[0]
         msg = "There are %d registered users." % count
         return self.bot.check_nick(msg, nick)
 
