@@ -27,8 +27,9 @@ class Learninghub(object):
             self.bot.notice(nick, greet)
 
     def users(self, nick=None):
-        num = len(self.c.fetchall())
-        msg = "There are %d registered users." % num
+        self.c.execute("SELECT * FROM users")
+        count = len(self.c.fetchall())
+        msg = "There are %d registered users." % count
         return self.bot.check_nick(msg, nick)
 
     def random_course(self, nick=None):
