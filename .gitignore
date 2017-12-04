@@ -1,5 +1,4 @@
 .idea
-__pyfiles__
-lib/__pyfiles__
+*__pycache__
 conf.json
 db.sqlite3
