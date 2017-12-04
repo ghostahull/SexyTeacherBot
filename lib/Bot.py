@@ -41,12 +41,13 @@ class Bot(object):
 
         recvd = self.s.recv(4096).decode()
 
-        data = valid.match(recvd)
-
-        if "PING" == recvd[:4]:
+        if "PING" in recvd:
             self.pong(recvd)
             return
-        elif not data:
+
+        data = valid.match(recvd)
+
+        if not data:
             return
 
         nick = data.group("nick")
@@ -122,8 +123,7 @@ class Bot(object):
                 raise ("[-] Error: ", socket.timeout)
 
     def pong(self, msg):
-        num = msg.strip("PING :")
-        self._send("PONG :%s" % num)
+        self._send("PONG %s\r\n" % msg.split()[1])
 
     def login(self):
         self._send(":source PRIVMSG nickserv :identify %s\r\n" % self.conf["pass"])
