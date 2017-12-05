@@ -22,7 +22,9 @@ class Learninghub(object):
         )
 
         sha2 = self.bot.sha2(nick)
-        if not self.c.execute("SELECT * FROM users WHERE hash=?", (sha2,)):
+        self.c.execute("SELECT count(*) FROM users WHERE hash=?", (sha2,))
+
+        if not self.c.fetchone()[0]:
             self.c.execute("INSERT into users (hash) values (?)", (sha2,))
             self.db.commit()
             self.bot.notice(nick, greet)
