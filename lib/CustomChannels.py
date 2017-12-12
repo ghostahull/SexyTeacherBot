@@ -22,10 +22,10 @@ class Learninghub(object):
         )
 
         sha2 = self.bot.sha2(nick)
-        self.c.execute("SELECT count(*) FROM users WHERE hash=?", (sha2,))
+        self.c.execute("SELECT count(*) FROM users WHERE hash=?", sha2)
 
         if not self.c.fetchone()[0]:
-            self.c.execute("INSERT into users (hash) values (?)", (sha2,))
+            self.c.execute("INSERT into users (hash) values (?)", sha2)
             self.db.commit()
             self.bot.notice(nick, greet)
 
@@ -43,14 +43,14 @@ class Learninghub(object):
 
     def desc(self, course):
         try:
-            self.c.execute("SELECT * FROM main_course WHERE key=?", (course,))
+            self.c.execute("SELECT * FROM main_course WHERE key=?", course)
             return self.c.fetchone()[2]
         except:
             return "?desc <1-133>"
 
     def link(self, course):
         try:
-            self.c.execute("SELECT * FROM main_course WHERE key=?", (course,))
+            self.c.execute("SELECT * FROM main_course WHERE key=?", course)
             return self.c.fetchone()[3]
         except:
             return "?link <1-133>"

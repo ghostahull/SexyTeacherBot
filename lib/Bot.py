@@ -74,13 +74,12 @@ class Bot(object):
             return nick, chan, cmd, arg
 
     def _connect(self):
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
         try:
+            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
             self.s.setblocking(1)
-            self.s.connect((self.conf["irc"], self.conf["port"]))
             self.s = ssl.wrap_socket(self.s)
+            self.s.connect((self.conf["irc"], self.conf["port"]))
         except Exception as e:
             print("Failed to connect. %s:%d" % (self.conf["irc"], self.conf["port"]))
             print(e)
