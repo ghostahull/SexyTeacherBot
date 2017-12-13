@@ -15,17 +15,17 @@ class Learninghub(object):
 
     def welcome(self, nick):
         greet = (
-            "Welcome to #learninghub %s! Here you'll find lots of resources and people to learn hacking/pentesting "
-            "as well as other IT subjects. Type ?goldmine to get started and get rid of the welcome message. Type "
-            "?desc <course_number> to know the description of a course. You have to use the course number in the "
-            "ghostbin. Type ?help for more." % nick
+                "Welcome to #learninghub %s! Here you'll find lots of resources and people to learn hacking/pentesting "
+                "as well as other IT subjects. Type ?goldmine to get started and get rid of the welcome message. Type "
+                "?desc <course_number> to know the description of a course. You have to use the course number in the "
+                "ghostbin. Type ?help for more." % nick
         )
 
         sha2 = self.bot.sha2(nick)
-        self.c.execute("SELECT count(*) FROM users WHERE hash=?", sha2)
+        self.c.execute("SELECT count(*) FROM users WHERE hash=?", (sha2,))
 
         if not self.c.fetchone()[0]:
-            self.c.execute("INSERT into users (hash) values (?)", sha2)
+            self.c.execute("INSERT into users (hash) values (?)", (sha2,))
             self.db.commit()
             self.bot.notice(nick, greet)
 
@@ -43,14 +43,14 @@ class Learninghub(object):
 
     def desc(self, course):
         try:
-            self.c.execute("SELECT * FROM main_course WHERE key=?", course)
+            self.c.execute("SELECT * FROM main_course WHERE key=?", (course,))
             return self.c.fetchone()[2]
         except:
             return "?desc <1-133>"
 
     def link(self, course):
         try:
-            self.c.execute("SELECT * FROM main_course WHERE key=?", course)
+            self.c.execute("SELECT * FROM main_course WHERE key=?", (course,))
             return self.c.fetchone()[3]
         except:
             return "?link <1-133>"
