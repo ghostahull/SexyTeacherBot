@@ -1,5 +1,5 @@
-from threading import Thread
 import json
+from threading import Thread
 
 from lib.Bot import Bot
 from lib.Exceptions import InvalidConfiguration
