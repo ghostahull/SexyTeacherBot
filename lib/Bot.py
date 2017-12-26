@@ -117,6 +117,8 @@ class Bot(object):
                 elif "%s!%s" % (self.conf["nick"], self.conf["user"]) in recvd:
                     print("[+] Ping successfully completed.")
                     break
+                else:
+                    break
 
             except socket.timeout:
                 raise ("[-] Error: ", socket.timeout)
