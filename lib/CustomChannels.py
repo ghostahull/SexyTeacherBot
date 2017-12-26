@@ -3,9 +3,9 @@ import sqlite3
 import psycopg2
 
 
-class Learninghubtest(object):
+class Learninghub(object):
     def __init__(self, data, bot):
-        self.name = "#learninghubtest"
+        self.name = "#learninghub"
         self.data = data
         self.bot = bot
         self.courses_db = psycopg2.connect(
