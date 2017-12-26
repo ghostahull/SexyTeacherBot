@@ -35,6 +35,21 @@ class Bot(object):
         sleep(3)
         self.join()
 
+    def _connect(self):
+        try:
+            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
+            self.s.setblocking(1)
+            self.s = ssl.wrap_socket(self.s)
+            self.s.connect((self.conf["irc"], self.conf["port"]))
+        except Exception as e:
+            print("Failed to connect. %s:%d" % (self.conf["irc"], self.conf["port"]))
+            print(e)
+            exit()
+
+    def _send(self, msg):
+        self.s.send(msg.encode("UTF-8"))
+
     def _listen(self):
         valid = re.compile(
             r"^:(?P<nick>\w+)!\S* (?P<mode>[A-Z]+) :?(?P<chan>#?\w+)(\s:\?(?P<cmd>\w+)(\s(?P<arg>\w+))?)?")
@@ -72,21 +87,6 @@ class Bot(object):
                 msg += " " + arg
             print(msg)
             return nick, chan, cmd, arg
-
-    def _connect(self):
-        try:
-            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
-            self.s.setblocking(1)
-            self.s = ssl.wrap_socket(self.s)
-            self.s.connect((self.conf["irc"], self.conf["port"]))
-        except Exception as e:
-            print("Failed to connect. %s:%d" % (self.conf["irc"], self.conf["port"]))
-            print(e)
-            exit()
-
-    def _send(self, msg):
-        self.s.send(msg.encode("UTF-8"))
 
     def message(self, msg, chan):
         self._send("PRIVMSG %s :%s\r\n" % (chan, msg))

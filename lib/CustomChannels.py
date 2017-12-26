@@ -2,13 +2,13 @@ import random
 import sqlite3
 
 
-class Learninghub(object):
+class Learninghubtest(object):
     def __init__(self, data, bot):
-        self.name = "#learninghub"
+        self.name = "#learninghubtest"
         self.data = data
         self.bot = bot
-        self.courses_db = sqlite3.connect("../courses.sqlite3")
-        self.users_db = sqlite3.connect("../users.sqlite3")
+        self.courses_db = sqlite3.connect("courses.sqlite3")
+        self.users_db = sqlite3.connect("users.sqlite3")
 
     def welcome(self, nick):
         greet = (
@@ -23,7 +23,7 @@ class Learninghub(object):
         c = self.users_db.cursor()
         c.execute("SELECT count(*) FROM users WHERE hash=?", (sha2,))
 
-        if not c.fetchone()[0]:
+        if c.fetchone()[0] == 0:
             c.execute("INSERT into users (hash) values (?)", (sha2,))
             self.users_db.commit()
             self.bot.notice(nick, greet)
