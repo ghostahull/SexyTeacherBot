@@ -31,11 +31,8 @@ class Bot(object):
 
     async def bootstrap(self):
         await self.connect()
-        asyncio.sleep(1)
         await self.auth()
-        asyncio.sleep(1)
         await self.ping()
-        asyncio.sleep(1)
         await self.join()
 
     async def connect(self):
@@ -45,7 +42,9 @@ class Bot(object):
             self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
             self.s.setblocking(True)
             self.s = ssl.wrap_socket(self.s)
+            asyncio.sleep(1)
             self.s.connect((self.conf["irc"], self.conf["port"]))
+            asyncio.sleep(1)
         except Exception as e:
             print("Failed to connect. %s:%d" % (self.conf["irc"], self.conf["port"]))
             print(e)
@@ -55,17 +54,19 @@ class Bot(object):
         print("[+] Sending credentials for %s." % self.conf["nick"])
 
         if self.conf["pass"]:
-            await self.send("PASS %s\r\n" % self.conf["pass"])
+            self.send("PASS %s\r\n" % self.conf["pass"])
 
-        await self.send("NICK %s\r\n" % self.conf["nick"])
-        await self.send("USER %s 0 * :%s\r\n" % (
+        self.send("NICK %s\r\n" % self.conf["nick"])
+        self.send("USER %s 0 * :%s\r\n" % (
             self.conf["user"],
             self.conf["real"]
         ))
         print("[+] Credentials sent. Waiting for authentication.")
+        asyncio.sleep(1)
 
     async def login(self):
-        await self.send(":source PRIVMSG nickserv :identify %s\r\n" % self.conf["pass"])
+        self.send(":source PRIVMSG nickserv :identify %s\r\n" % self.conf["pass"])
+        asyncio.sleep(1)
 
     async def join(self):
         print("[+] Joining channels.\n")
@@ -76,9 +77,10 @@ class Bot(object):
             await self.login()
 
         for x in self.conf["chans"]:
-            await self.send("JOIN %s\r\n" % x)
+            self.send("JOIN %s\r\n" % x)
 
-        await self.send("MODE %s +B\r\n" % self.conf["nick"])
+        self.send("MODE %s +B\r\n" % self.conf["nick"])
+        asyncio.sleep(1)
 
     async def ping(self):
         while True:
@@ -94,8 +96,10 @@ class Bot(object):
             except socket.timeout:
                 raise ("[-] Error: ", socket.timeout)
 
+        asyncio.sleep(1)
+
     async def pong(self, msg):
-        await self.send("PONG %s\r\n" % msg.split()[1])
+        self.send("PONG %s\r\n" % msg.split()[1])
 
     async def listen(self):
         valid = re.compile(
@@ -135,14 +139,14 @@ class Bot(object):
             print(msg)
             return nick, chan, cmd, arg
 
-    async def send(self, msg):
+    def send(self, msg):
         self.s.send(msg.encode("UTF-8"))
 
-    async def message(self, msg, chan):
-        await self.send("PRIVMSG %s :%s\r\n" % (chan, msg))
+    def message(self, msg, chan):
+        self.send("PRIVMSG %s :%s\r\n" % (chan, msg))
 
-    async def notice(self, user, msg):
-        await self.send("NOTICE %s :%s\r\n" % (user, msg))
+    def notice(self, user, msg):
+        self.send("NOTICE %s :%s\r\n" % (user, msg))
 
     @staticmethod
     def check_nick(msg, nick=None):

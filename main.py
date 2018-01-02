@@ -107,7 +107,7 @@ async def listen():
         response = exec_command(obj, void, arg)
 
     if response and cmd != "welcome":
-        await bot.message(response, chan)
+        bot.message(response, chan)
 
 
 def exec_command(obj, void, arg):
