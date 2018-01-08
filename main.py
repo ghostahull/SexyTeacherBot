@@ -1,6 +1,7 @@
 import asyncio
 import json
 from threading import Thread
+from inspect import signature
 
 from lib import CustomChannels
 from lib.Bot import Bot
@@ -115,7 +116,15 @@ def exec_command(obj, void, arg):
 
     if hasattr(obj, void):
         func = getattr(obj, void)
-        response = func(arg) if arg else func()
+
+        # Check out if func takes arguments, and if they have been supplied.
+        if len(signature(func).parameters):
+            if not arg:
+                return response
+
+            response = func(arg)
+        else:
+            response = func()
 
     return response
 

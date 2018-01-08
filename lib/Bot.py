@@ -42,9 +42,9 @@ class Bot(object):
             self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
             self.s.setblocking(True)
             self.s = ssl.wrap_socket(self.s)
-            asyncio.sleep(1)
+            await asyncio.sleep(1)
             self.s.connect((self.conf["irc"], self.conf["port"]))
-            asyncio.sleep(1)
+            await asyncio.sleep(1)
         except Exception as e:
             print("Failed to connect. %s:%d" % (self.conf["irc"], self.conf["port"]))
             print(e)
@@ -62,11 +62,11 @@ class Bot(object):
             self.conf["real"]
         ))
         print("[+] Credentials sent. Waiting for authentication.")
-        asyncio.sleep(1)
+        await asyncio.sleep(1)
 
     async def login(self):
         self.send(":source PRIVMSG nickserv :identify %s\r\n" % self.conf["pass"])
-        asyncio.sleep(1)
+        await asyncio.sleep(1)
 
     async def join(self):
         print("[+] Joining channels.\n")
@@ -80,7 +80,7 @@ class Bot(object):
             self.send("JOIN %s\r\n" % x)
 
         self.send("MODE %s +B\r\n" % self.conf["nick"])
-        asyncio.sleep(1)
+        await asyncio.sleep(1)
 
     async def ping(self):
         while True:
@@ -96,7 +96,7 @@ class Bot(object):
             except socket.timeout:
                 raise ("[-] Error: ", socket.timeout)
 
-        asyncio.sleep(1)
+        await asyncio.sleep(1)
 
     async def pong(self, msg):
         self.send("PONG %s\r\n" % msg.split()[1])

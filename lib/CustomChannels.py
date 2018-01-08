@@ -9,10 +9,10 @@ class Learninghub(object):
         self.data = data
         self.bot = bot
         self.courses_db = psycopg2.connect(
-            "host='ec2-23-21-186-138.compute-1.amazonaws.com'"
-            "dbname='d5h8kcam6auolb'"
-            "user='ulsqobzojookfh'"
-            "password=''"
+            host='ec2-23-21-186-138.compute-1.amazonaws.com',
+            dbname='d5h8kcam6auolb',
+            user='ulsqobzojookfh',
+            password=''
         )
         self.users_db = sqlite3.connect("users.sqlite3")
 
@@ -33,7 +33,7 @@ class Learninghub(object):
             self.users_db.commit()
             self.bot.notice(nick, greet)
 
-    def users(self, nick=None):
+    def users(self, nick):
         c = self.users_db.cursor()
         c.execute("SELECT count(*) FROM users")
         count = c.fetchone()[0]
