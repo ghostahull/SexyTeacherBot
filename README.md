@@ -1,25 +1,70 @@
 # SexyTeacherBot
 
-The code must be run with python 3.6
+> Project must be run with python3.6
 
-SexyTeacherBot is an interactive bot used in educational irc channels.
-The main purpose of this bot is to write an easy to use interface as well a providing some dynamic, helpful and fun functionality.
+This bot's main aim is to have an easy-to-modify structure, so that plugins can be easily.
 
-Every channel the bot serves on needs to have a specific tag in the conf.json. That helps the bot coordinate it's commands and functionality. Adding special actions for a certain channel, that is, making it do something other than just provide a "quick response", will require an object under CustomChannels.py. 
+## Code
 
+The code is structured in three main files.
+1. **Bot.py**: contains the bot's inner workings, it takes care of sockets and connections.
+2. **main.py**: is one level higher than Bot.py. It mainly interacts with Bot.py, stating how the
+bot should respond, and links all plugins together.
 
-For security purposes, conf.json is incomplete. Lacking both 'users' - #learninghub and 'conf'.
+### Plugins
+
+3. **CustomChannels.py** controls plugins. A plugin is a class referencing a channel's name. It's 
+structure should follow the structure below:
 
 ```
-'users' should contain a list of SHA2 Hashes of registered channel nicks (nicks that have been in the channel before).
+class Channel_name(object):
+    def __init__(self, data, bot):
+        self.name = "#channel_name"
+        self.data = data
+        self.bot = bot
+        
+    def shout(self, arg=None):
+        """ An example of an action, it should return a response. The arg is optional. """
+        if arg:
+            return "HELLO %s!" % arg.upper()
+        
+        return "HELLO!"
+```
 
+Actions should only be used for answers that need some kind of computation. If it is 
+a static response it should be added to the conf.json following the structure below:
+
+```
 'conf' = {
-    "irc": str(),       # IRC's address
-    "port": int(),      # IRC's port
-    "nick": str(),      # Bot's nick name
-    "user": str(),      # Bot's user name
-    "real": str(),      # Bot's real name
-    "pass": str()       # Bot's password
-    "chans": [str()],   # Channels bot should connect to, it will only answer in the first one
+    "#channel_name": {
+        "commands": {
+            "hello": "Hello"  # Answers `Hello` when someone executes `?hello`.
+        },
+        "actions": {
+            "shout": "shout"  # Points the command `?shout` to the function `shout`.
+        },
+        "help": {
+            "shout": "Use ?shout <nick>"  # Return custom help for an action: `?help shout`.
+        }
+    }
+}
+```
+
+## Config file
+
+This file is not included in the repository and must be added. Each channel should have 
+an entry as showed above. 
+
+```
+{
+    'conf' = {
+        "irc": str(),       # IRC's address
+        "port": int(),      # IRC's port
+        "nick": str(),      # Bot's nick
+        "user": str(),      # Bot's username
+        "real": str(),      # Bot's realname
+        "pass": str()       # Bot's password
+        "chans": [str()],   # Channels to connect to
+    }
 }
 ```
