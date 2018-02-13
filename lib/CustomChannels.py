@@ -12,7 +12,7 @@ class Learninghub(object):
             host='ec2-23-21-186-138.compute-1.amazonaws.com',
             dbname='d5h8kcam6auolb',
             user='ulsqobzojookfh',
-            password='b7a53249cc86083daf551d6e9d45c3ab165637030377f090f01ee4490cb80669'
+            password=''
         )
         self.users_db = sqlite3.connect("users.sqlite3")
 
