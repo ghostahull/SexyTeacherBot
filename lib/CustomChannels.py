@@ -12,7 +12,7 @@ class Learninghub(object):
             host='ec2-23-21-186-138.compute-1.amazonaws.com',
             dbname='d5h8kcam6auolb',
             user='ulsqobzojookfh',
-            password=''
+            password='b7a53249cc86083daf551d6e9d45c3ab165637030377f090f01ee4490cb80669'
         )
         self.users_db = sqlite3.connect("users.sqlite3")
 
@@ -33,12 +33,12 @@ class Learninghub(object):
             self.users_db.commit()
             self.bot.notice(nick, greet)
 
-    def users(self, nick):
+    def users(self):
         c = self.users_db.cursor()
         c.execute("SELECT count(*) FROM users")
         count = c.fetchone()[0]
         msg = "There are %d registered users." % count
-        return self.bot.check_nick(msg, nick)
+        return msg
 
     def desc(self, course):
         c = self.courses_db.cursor()
@@ -56,12 +56,12 @@ class Learninghub(object):
         except:
             return "?link <1-133>"
 
-    def random_course(self, nick=None):
+    def random_course(self):
         c = self.courses_db.cursor()
         c.execute("SELECT * FROM main_course")
         course = random.choice(c.fetchall())
         msg = "%s. %s." % (course[4], course[1])
-        return self.bot.check_nick(msg, nick)
+        return msg
 
     def whatof(self, arg=None):
         if arg in self.data[self.name]["whatof"]:

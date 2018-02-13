@@ -1,18 +1,10 @@
-import asyncio
 import json
 from threading import Thread
-from inspect import signature
 
 from lib import CustomChannels
 from lib.Bot import Bot
 
 CONF_FILE_NAME = "conf.json"
-
-
-loop = asyncio.get_event_loop()
-
-def exe(coro):
-    return loop.run_until_complete(coro)
 
 
 def main():
@@ -25,7 +17,7 @@ def main():
     print(bot.conf["chans"][0])
 
     while True:
-        exe(listen())
+        listen()
 
 
 def load_config():
@@ -87,8 +79,8 @@ def bot_help(chan=None, arg=None):
     return bot.check_nick(msg, arg)
 
 
-async def listen():
-    info = await bot.listen()
+def listen():
+    info = bot.listen()
 
     if not info:
         return
@@ -116,15 +108,7 @@ def exec_command(obj, void, arg):
 
     if hasattr(obj, void):
         func = getattr(obj, void)
-
-        # Check out if func takes arguments, and if they have been supplied.
-        if len(signature(func).parameters):
-            if not arg:
-                return response
-
-            response = func(arg)
-        else:
-            response = func()
+        response = func(arg) if arg else func()
 
     return response
 

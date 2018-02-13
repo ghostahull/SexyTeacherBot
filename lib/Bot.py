@@ -1,10 +1,8 @@
-#!/usr/bin/python
-
-import asyncio
 import hashlib
 import re
 import socket
 import ssl
+import time
 
 __author__ = "Anonymous"
 __license__ = "GPLv3"
@@ -12,45 +10,40 @@ __license__ = "GPLv3"
 CONF_FILENAME = "conf.json"
 
 
-loop = asyncio.get_event_loop()
-
-def exe(coro):
-    return loop.run_until_complete(coro)
-
-
 class Bot(object):
     def __init__(self, data):
         self.data = data
         self.conf = data["conf"]
         self.s = None
-        exe(self.bootstrap())
+        self.bootstrap()
 
     @staticmethod
     def sha2(text):
         return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
-    async def bootstrap(self):
-        await self.connect()
-        await self.auth()
-        await self.ping()
-        await self.join()
+    def bootstrap(self):
+        self.connect()
+        time.sleep(1)
+        self.auth()
+        time.sleep(1)
+        self.ping()
+        time.sleep(1)
+        self.join()
 
-    async def connect(self):
+    def connect(self):
         try:
             print("[*] Connecting to server.")
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
             self.s.setblocking(True)
             self.s = ssl.wrap_socket(self.s)
-            await asyncio.sleep(1)
             self.s.connect((self.conf["irc"], self.conf["port"]))
-            await asyncio.sleep(1)
         except Exception as e:
             print("Failed to connect. %s:%d" % (self.conf["irc"], self.conf["port"]))
             print(e)
             exit()
 
-    async def auth(self):
+    def auth(self):
         print("[+] Sending credentials for %s." % self.conf["nick"])
 
         if self.conf["pass"]:
@@ -62,33 +55,30 @@ class Bot(object):
             self.conf["real"]
         ))
         print("[+] Credentials sent. Waiting for authentication.")
-        await asyncio.sleep(1)
 
-    async def login(self):
+    def login(self):
         self.send(":source PRIVMSG nickserv :identify %s\r\n" % self.conf["pass"])
-        await asyncio.sleep(1)
 
-    async def join(self):
+    def join(self):
         print("[+] Joining channels.\n")
 
         # Ensure the login is made correctly.
         # Most times the first login doesn't connect.
         for _ in range(3):
-            await self.login()
+            self.login()
 
         for x in self.conf["chans"]:
             self.send("JOIN %s\r\n" % x)
 
         self.send("MODE %s +B\r\n" % self.conf["nick"])
-        await asyncio.sleep(1)
 
-    async def ping(self):
+    def ping(self):
         while True:
             try:
                 recvd = self.s.recv(4096).decode()
 
                 if "PING" in recvd:
-                    await self.pong(recvd)
+                    self.pong(recvd)
                 elif "%s!%s" % (self.conf["nick"], self.conf["user"]) in recvd:
                     print("[+] Ping successfully completed.")
                     break
@@ -96,19 +86,17 @@ class Bot(object):
             except socket.timeout:
                 raise ("[-] Error: ", socket.timeout)
 
-        await asyncio.sleep(1)
-
-    async def pong(self, msg):
+    def pong(self, msg):
         self.send("PONG %s\r\n" % msg.split()[1])
 
-    async def listen(self):
+    def listen(self):
         valid = re.compile(
             r"^:(?P<nick>\w+)!\S* (?P<mode>[A-Z]+) :?(?P<chan>#?\w+)(\s:\?(?P<cmd>\w+)(\s(?P<arg>\w+))?)?")
 
         recvd = self.s.recv(4096).decode()
 
         if "PING" in recvd:
-            await self.pong(recvd)
+            self.pong(recvd)
             return
 
         data = valid.match(recvd)
