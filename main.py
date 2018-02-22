@@ -108,7 +108,10 @@ def exec_command(obj, void, arg):
 
     if hasattr(obj, void):
         func = getattr(obj, void)
-        response = func(arg) if arg else func()
+        try:
+            response = func(arg) if arg else func()
+        except:
+            pass
 
     return response
 
